@@ -1,0 +1,44 @@
+\documentclass[12pt]{extarticle}
+\usepackage[utf8]{inputenc}
+\usepackage{amsmath}
+\usepackage{hyperref}
+\usepackage{float}
+\usepackage{graphicx}
+\usepackage{caption}
+\usepackage[export]{adjustbox}
+\usepackage{amssymb}
+\usepackage{hyperref}
+\usepackage{algorithm2e}
+\usepackage{multirow}
+
+\RestyleAlgo{ruled}
+\newcommand{\quotes}[1]{``#1''}
+
+\title{SPM project - JACOBI}
+\author{Luca Moroni (635966)}
+\date{- 2022}
+
+\linespread{1.2}
+\usepackage[a4paper,margin=1in,footskip=0.25in]{geometry}
+
+
+\begin{document}
+
+\maketitle
+
+\section{Analysis}
+In this section will be considered the theoretical analysis on the paralallelization of the \textbf{Jacobi} algorithm.\\
+For the sake of a clear discussion I will report the high-level pseudo code of the Jacobi method.\\\\
+
+- PSEUDOCODE\\\\
+
+We can notice that the external for have to be done sequentially, due to the fact that the $x^{k+1}$'s elements depend to the elements of $x^k$. To the other hand the two internal for can be computed in a parallel fashion, the second for can be totally parallelized, due to the independence in the computations done for $x_i^k$ and $x_j^k$ for $i$ and $j$ different at same iteration $k$. Due to the property of independence just stated we can parallelize the for statement using a map pattern apply as function the computations done in the body of the second for, this kind of data-parallel pattern is coherent with our problem since the data is availavable at the start of the external for.\\
+Analyzing again the code we can notice, moreover, that the internal for (the third one) can be parallelized, the computations can be parallelized with a reduce parallel pattern, the reduce variable is $\sigma$, the operation is the sum, that is commutative and associative (mandatory requirements for an operation to be used in a reduce pattern) and the elements of the data-parallel pattern consist in $a_{ij}x_j^k$.\\\\
+So until now the patterns that I want to use are the map (the second for) and a reduce over variable $\sigma$ and with the sum operation (the third for).\\\\
+Firt of all I implemented the sequential version of the code, same as reported in this presentation, this kind of implementation is mandatory to have the time necessary to run the sequential code necessary to compute the \textbf{speedup} metric.\\
+For the experiments done I used the \textbf{speedup}, the \textbf{scalability} and the \textbf{efficiency} metrics.
+
+\bibliographystyle{plain}
+\bibliography{bibliography.bib}
+\end{document}
+
