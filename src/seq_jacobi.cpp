@@ -5,11 +5,10 @@
 using namespace std;
 
 template <size_t n>
-float euclidean_distance(float x[n], float y[n]) {
-    float dist = 0;
+double euclidean_distance(double x[n], double y[n]) {
+    double dist = 0;
 
     for (int i=0; i<n; i++) {
-        cout << x[i] << endl;
         dist += pow((x[i] - y[i]), 2);
     }
 
@@ -17,14 +16,31 @@ float euclidean_distance(float x[n], float y[n]) {
 }
 
 template <size_t n>
-void jacobi_method(float x_start[n], float A[n][n], float b[n], float eps) {
+void print_vector(double x[n]) {
+    for (int i=0; i<n; i++) {
+        cout << x[i] << " ";
+    }
+
+    cout << endl;
+}
+
+template <size_t n>
+void copy_array(double x[n], double y[n]) {
+    for (int i=0; i<n; i++) {
+        x[i] = y[i];
+    }
+}
+
+template <size_t n>
+void jacobi_method(double x_start[n], double A[n][n], double b[n], double eps) {
     int k = 0;
 
-    auto x_k = x_start;
+    double x_k[n];
+    double x_prev[n];
+    copy_array<n>(x_k, x_start);
 
     while ( true ) {
-        auto x_prev = x_k;
-        float x_k[n];
+        copy_array<n>(x_prev, x_k);
         for (int i=0; i<n; i++) {
             int sigma = 0;
             for (int j=0; j<n; j++) {
@@ -34,20 +50,27 @@ void jacobi_method(float x_start[n], float A[n][n], float b[n], float eps) {
             }
             x_k[i] = (b[i] - sigma)/A[i][i];
         }
-        if (euclidean_distance<n>(x_k, x_prev) <= eps)
+        auto dist = euclidean_distance<n>(x_k, x_prev);
+        print_vector<n>(x_prev);
+        print_vector<n>(x_k);
+        cout << dist << endl;
+        if (k == 100)
+        break;
+        if (dist == 0.0)
             break;
+        k ++;
     }
 }
 
 int main() {
     cout << "SEQUENTIAL JACOBI METHOD" << endl;
-    const int n = 4;
-    float A[n][n] = {{2,1,2,3}, {4,5,6,7}, {8,9,10,11}, {1,2,3,4}};
-    float x_start[n] = {0,0,0,0};
-    float b[n] = {3, 4, 3, 3};
+    const int n = 3;
+    double A[n][n] = {{0.5, 0, 0}, {0, 0.5, 0}, {0 , 0, 0.5}};
+    double x_start[n] = {0,0,0};
+    double b[n] = {1, 1, 1};
     {
         auto timer = utimer("jacobi with n = 4");
 
-        jacobi_method<n>(x_start, A, b, 1.0f);
+        jacobi_method<n>(x_start, A, b, 0.000000001);
     }
 }
