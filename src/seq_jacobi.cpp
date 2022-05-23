@@ -2,11 +2,12 @@
 #include <cmath>
 #include "utimer.cpp"
 #include <random>
+#include <vector>
+
 using namespace std;
 
-
-template <size_t n>
-double euclidean_distance(double x[n], double y[n]) {
+double euclidean_distance(vector<double> x, vector<double> y) {
+    int n = x.size();
     double dist = 0;
 
     for (int i=0; i<n; i++) {
@@ -23,8 +24,9 @@ double random_in_range(int minimum, int maximum) {
     return randValue;
 }
 
-template <size_t n>
-bool is_diagonally_dominant(double A[n][n]) {
+bool is_diagonally_dominant(vector<vector<double>> A) {
+    int n = A.size();
+
     for (int i=0; i<n; i++) {
         double sum = 0;
         for (int j=0; j<n; j++) {
@@ -40,8 +42,8 @@ bool is_diagonally_dominant(double A[n][n]) {
     return true;
 }
 
-template <size_t n>
-void initialize_matrix_A(double A[n][n], double b[n], int minimum, int maximum) {
+void initialize_problem(vector<vector<double>> &A, vector<double> &b, int minimum, int maximum) {
+    int n = A.size();
 
     // initialize matrix with random values
     for (int i=0; i<n; i++) {
@@ -68,52 +70,45 @@ void initialize_matrix_A(double A[n][n], double b[n], int minimum, int maximum) 
     }
 }
 
-template <size_t n>
-void print_vector(double x[n]) {
-    for (int i=0; i<n; i++) {
-        cout << x[i] << " ";
+void print_vector(vector<double> b) {
+    for (auto i: b) {
+        cout << i << " ";
     }
-
     cout << endl;
 }
 
-template <size_t n>
-void print_matrix(double A[n][n]) {
-    for (int i=0; i<n; i++) {
-        print_vector<n>(A[i]);
-    }
-}
-
-template <size_t n>
-void copy_array(double x[n], double y[n]) {
-    for (int i=0; i<n; i++) {
-        x[i] = y[i];
-    }
-}
-
-template <size_t n>
-void jacobi_method(double A[n][n], double b[n], double eps, double res[n]) {
+void jacobi_method(vector<vector<double>> &A, vector<double> &b, double eps, vector<double> &res) {
     int k = 0;
 
-    double x_start[n] = {0,0,0};
-    double x_k[n];
-    double x_prev[n];
-    copy_array<n>(x_k, x_start);
+    int n = A.size();
+
+    vector<double> x_start = {0,0,0};
+    vector<double> x_k(n);
+    vector<double> x_prev(n);
+    x_k = x_start;
+
+    auto A_data = A.data();
+    auto b_data = b.data();
 
     while ( true ) {
-        copy_array<n>(x_prev, x_k);
+        x_prev = x_k;
+
+        auto x_prev_data = x_prev.data();
+        auto x_k_data = x_k.data();
+
         for (int i=0; i<n; i++) {
             double sigma = 0;
             for (int j=0; j<n; j++) {
                 if  ( j!=i )
-                    sigma = sigma + A[i][j]*x_prev[j];
+                    sigma = sigma + A_data[i][j]*x_prev_data[j];
             }
-            x_k[i] = (b[i] - sigma)/A[i][i];
+            x_k[i] = (b_data[i] - sigma)/A_data[i][i];
         }
-        auto dist = euclidean_distance<n>(x_k, x_prev);
-        //print_vector<n>(x_prev);
-        //print_vector<n>(x_k);
+
+        auto dist = euclidean_distance(x_k, x_prev);
+
         cout << dist << endl;
+
         if (k == 100) {
             cout << "WARNING: out of iterations !!" << endl;
             break;
@@ -123,25 +118,44 @@ void jacobi_method(double A[n][n], double b[n], double eps, double res[n]) {
         k ++;
     }
 
-    copy_array<n>(res, x_k);
+    res = x_k;
+}
+
+void print_matrix(vector<vector<double>> A) {
+    for (int i=0; i<A.size(); i++) {
+        for (int j=0; j<A[i].size(); j++)
+            std::cout << A[i][j] << ' ';
+        cout << endl;
+    }
+    cout << endl;
 }
 
 int main() {
     srand(time(NULL));
     cout << "SEQUENTIAL JACOBI METHOD" << endl;
     const int n = 3;
-    double A[n][n];
-    double b[n];
-    double res[n];
-    initialize_matrix_A<n>(A, b, -10, 10);
-    cout << int(is_diagonally_dominant<n>(A)) << endl;
-    print_matrix<n>(A);
-    print_vector<n>(b);
+
+    // instantiate matrix A
+    vector<vector<double>> A(n);
+    for (int i=0; i<n; i++) {
+        A[i] = vector<double>(n);
+    }
+
+    // instantiate vector b
+    vector<double> b(n);
+
+    vector<double> res(n);
+    initialize_problem(A, b, -10, 10);
+
+    print_matrix(A);
+    print_vector(b);
+
+    cout << int(is_diagonally_dominant(A)) << endl;
     {
         auto timer = utimer("jacobi with n = 4");
 
-        jacobi_method<n>(A, b, 0.000000001, res);
+        jacobi_method(A, b, 0.000000001, res);
     }
 
-    print_vector<n>(res);
+    print_vector(res);
 }
