@@ -113,7 +113,7 @@ void jacobi_method(vector<vector<double>> &A, vector<double> &b, double eps, vec
             cout << "WARNING: out of iterations !!" << endl;
             break;
         }
-        if (dist <= 1.0e-6)
+        if (dist <= eps)
             break;
         k ++;
     }
@@ -131,7 +131,8 @@ void print_matrix(vector<vector<double>> A) {
 }
 
 int main() {
-    srand(time(NULL));
+    //srand(time(NULL));
+    srand(123);
     cout << "SEQUENTIAL JACOBI METHOD" << endl;
     const int n = 3;
 
@@ -144,17 +145,20 @@ int main() {
     // instantiate vector b
     vector<double> b(n);
 
+    // instantiate vector res
     vector<double> res(n);
+
     initialize_problem(A, b, -10, 10);
 
     print_matrix(A);
     print_vector(b);
 
     cout << int(is_diagonally_dominant(A)) << endl;
+
     {
         auto timer = utimer("jacobi with n = 4");
 
-        jacobi_method(A, b, 0.000000001, res);
+        jacobi_method(A, b, 1.0e-6, res);
     }
 
     print_vector(res);
