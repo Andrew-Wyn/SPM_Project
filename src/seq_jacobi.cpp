@@ -9,7 +9,7 @@ void seq_jacobi_method(vector<vector<double>> &A, vector<double> &b, double eps,
 
     int n = A.size();
 
-    vector<double> x_start = {0,0,0};
+    vector<double> x_start(n);
     vector<double> x_k(n);
     vector<double> x_prev(n);
     x_k = x_start;
@@ -32,14 +32,15 @@ void seq_jacobi_method(vector<vector<double>> &A, vector<double> &b, double eps,
             x_k[i] = (b_data[i] - sigma)/A_data[i][i];
         }
 
-        auto dist = euclidean_distance(x_k, x_prev);
-
-        cout << dist << endl;
-
         if (k == 100) {
             cout << "WARNING: out of iterations !!" << endl;
             break;
         }
+
+        auto dist = euclidean_distance(x_k, x_prev);
+
+        cout << dist << endl;
+
         if (dist <= eps)
             break;
         k ++;

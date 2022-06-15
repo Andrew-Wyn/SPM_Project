@@ -2,6 +2,7 @@
 #include <cmath>
 #include <random>
 #include <vector>
+#include <string> 
 
 #include "utimer.cpp"
 #include "utils.cpp"
@@ -11,11 +12,12 @@
 
 using namespace std;
 
-int main() {
+int main(int argc, char** argv) {
     //srand(time(NULL));
     srand(123);
     cout << "SEQUENTIAL JACOBI METHOD" << endl;
-    const int n = 1000;
+    int n = atoi(argv[1]);
+    int nw = atoi(argv[2]);
 
     // instantiate matrix A
     vector<vector<double>> A(n);
@@ -39,27 +41,27 @@ int main() {
     cout << int(is_diagonally_dominant(A)) << endl;
 
     {
-        auto timer_seq = utimer("SEQ: jacobi with n = 1000");
+        auto timer_seq = utimer("SEQ: jacobi n = " + to_string(n));
 
         seq_jacobi_method(A, b, 1.0e-6, res_seq);
     }
     
-    print_vector(res_seq);
+    // print_vector(res_seq);
 
     {
-        auto timer_ff = utimer("FF: jacobi with n = 1000");
+        auto timer_ff = utimer("FF: jacobi with n = " + to_string(n));
 
-        ff_jacobi_method(A, b, 1.0e-6, res_ff, 32, 10);
+        ff_jacobi_method(A, b, 1.0e-6, res_ff, 32);
     }
     
-    print_vector(res_ff);
+    // print_vector(res_ff);
 
     {
-        auto timer_th = utimer("TH: jacobi with n = 1000");
+        auto timer_th = utimer("TH: jacobi with n = " + to_string(n));
 
-        th_jacobi_method(A, b, 1.0e-6, res_th, 32, 10);
+        th_jacobi_method(A, b, 1.0e-6, res_th, 32);
     }
     
-    print_vector(res_th);
+    // print_vector(res_th);
 
 }

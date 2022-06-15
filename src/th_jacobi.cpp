@@ -144,12 +144,12 @@ public:
     }
 };
 
-void th_jacobi_method(vector<vector<double>> &A, vector<double> &b, double eps, vector<double> &res, int nw_map, int nw_reduce) {
+void th_jacobi_method(vector<vector<double>> &A, vector<double> &b, double eps, vector<double> &res, int nw) {
     int k = 0;
 
     int n = A.size();
 
-    vector<double> x_start = {0,0,0};
+    vector<double> x_start(n);
     vector<double> x_k(n);
     vector<double> x_prev(n);
     x_k = x_start;
@@ -158,7 +158,7 @@ void th_jacobi_method(vector<vector<double>> &A, vector<double> &b, double eps, 
     auto b_data = b.data();
 
     // setting up the parallel for in FastFlow
-    ThParallelFor pf(nw_map);
+    ThParallelFor pf(nw);
 
     while ( true ) {
         x_prev = x_k;
