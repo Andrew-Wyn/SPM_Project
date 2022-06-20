@@ -5,6 +5,7 @@
 
 using namespace std;
 
+// Computing the euclidan distance between two vectors x and y
 double euclidean_distance(vector<double> x, vector<double> y) {
     int n = x.size();
     double dist = 0;
@@ -16,6 +17,7 @@ double euclidean_distance(vector<double> x, vector<double> y) {
     return sqrt(dist);
 }
 
+// Return a random number taked uniformelly in the range [minimum, maximum]
 double random_in_range(int minimum, int maximum) {
     auto randValue = rand() / double(RAND_MAX); // random number in [0, 1]
     randValue = randValue*(maximum - minimum) + minimum;
@@ -23,6 +25,7 @@ double random_in_range(int minimum, int maximum) {
     return randValue;
 }
 
+// Check if the matrix A is diagonally dominant
 bool is_diagonally_dominant(vector<vector<double>> A) {
     int n = A.size();
 
@@ -41,6 +44,7 @@ bool is_diagonally_dominant(vector<vector<double>> A) {
     return true;
 }
 
+// Initialize the problem appropiatelly filling the vectors A and b
 void initialize_problem(vector<vector<double>> &A, vector<double> &b, int minimum, int maximum) {
     int n = A.size();
 
@@ -69,6 +73,7 @@ void initialize_problem(vector<vector<double>> &A, vector<double> &b, int minimu
     }
 }
 
+// Utility that print a vector
 void print_vector(vector<double> b) {
     for (auto i: b) {
         cout << i << " ";
@@ -76,6 +81,7 @@ void print_vector(vector<double> b) {
     cout << endl;
 }
 
+// Utility that print a matrix
 void print_matrix(vector<vector<double>> A) {
     for (int i=0; i<A.size(); i++) {
         for (int j=0; j<A[i].size(); j++)
