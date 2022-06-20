@@ -13,6 +13,7 @@
 
 using namespace std;
 
+// Shared queue class
 template <typename QTYPE>
 class sharedQueue {
 
@@ -39,6 +40,8 @@ public:
 
 };
 
+// function executed by the thread in the ThreadPool class,
+// each thread wait the operation to compute
 void thread_f(sharedQueue<function<int()>> &q) {
     while (true) {
         auto el = q.pop();
@@ -57,9 +60,11 @@ private:
     sharedQueue<function<int()>> q;
     int num_workers;
 public:
+    // Constructor
     ThreadPool() {}
 
-    ThreadPool(int nw) {     // Constructor
+    // Constructor
+    ThreadPool(int nw) {
       pool.resize(nw);
       num_workers = nw;
       for (int i=0; i<nw; i++) {
@@ -67,6 +72,8 @@ public:
       }
     }
 
+    // initialization of the pool
+    // useful when the number of worker is not known at the creation of the ThreadPool object
     void initialize(int nw) {
         pool.resize(nw);
         num_workers = nw;
@@ -75,6 +82,8 @@ public:
         }
     }
 
+    // push the function to be computed into the shared queue
+    // and return the future to the caller
     template< class Function, class... Args >
     auto push(Function f, Args&&... args) {
         function<decltype(f(args...))()> func = std::bind(std::forward<Function>(f), std::forward<Args>(args)...);
@@ -91,6 +100,8 @@ public:
         return task_ptr -> get_future();
     }
 
+    // terminate the thread pool
+    // sending a termination message to each worker
     void terminate() {
 
         for (int i=0; i<num_workers; i++) {
@@ -107,6 +118,7 @@ public:
     }
 };
 
+// Parallel For implementation
 class ThParallelFor {
 private:
     ThreadPool tp;
@@ -117,56 +129,60 @@ public:
         num_workers = nw;
     }
 
+    // method to execute the parallel for, taking start and end position
+    // and the function to map over the array
     template<class Function>
     void parallel_for(const long start, const long end, Function functor) {
         int delta = int((end-start)/num_workers);
 
+        // define the operations for each bucket
         auto fun = [&](const long bucket_start, const long bucket_end){
             for (int i=bucket_start; i<bucket_end; i++) {
                 functor(i);
             }
         };
 
-        vector<future<void>> futures(num_workers);
+        // run the operations for each bucket
+        future<void> futures[num_workers];
         for (int worker=0; worker<num_workers-1; worker++) {
             
             futures[worker] = tp.push(fun, worker*delta, (worker+1)*delta);
         }
         futures[num_workers-1] = tp.push(fun, (num_workers-1)*delta, end);
-
+        
+        // wait the results
         for (int worker=0; worker<num_workers; worker++) {
             futures[worker].get();
         }
     }
 
+    // destroy the underlying thread pool
     void destroy() {
         tp.terminate();
     }
 };
 
-void th_jacobi_method(vector<vector<double>> &A, vector<double> &b, double eps, vector<double> &res, int nw) {
+void th_jacobi_method(vector<vector<double>> &A, vector<double> &b, double eps, int max_iterations, bool distance_stop, bool debug, vector<double> &res, int nw) {
     int k = 0;
 
     int n = A.size();
 
-    vector<double> x_start(n);
+    // initialization variables
     vector<double> x_k(n);
     vector<double> x_prev(n);
-    x_k = x_start;
 
+    // getting underling data, return array of double, faster to deal with
     auto A_data = A.data();
     auto b_data = b.data();
+    auto x_prev_data = x_prev.data();
+    auto x_k_data = x_k.data();
 
     // setting up the parallel for in FastFlow
     ThParallelFor pf(nw);
 
     while ( true ) {
-        x_prev = x_k;
 
-        auto x_prev_data = x_prev.data();
-        auto x_k_data = x_k.data();
-
-        // parallel for - map pattern
+        // Jacobi Iteration
         pf.parallel_for(0, n, [&](const long i){
             double sigma = 0;
 
@@ -175,23 +191,39 @@ void th_jacobi_method(vector<vector<double>> &A, vector<double> &b, double eps, 
                     sigma = sigma + A_data[i][j]*x_prev_data[j];
             }
 
-            x_k[i] = (b_data[i] - sigma)/A_data[i][i];
+            x_k_data[i] = (b_data[i] - sigma)/A_data[i][i];
         });
 
-        auto dist = euclidean_distance(x_k, x_prev);
+        if (distance_stop) {
+            // compute the euclidean distance between x_k and x_prev
+            auto dist = euclidean_distance(x_k, x_prev);
 
-        cout << dist << endl;
+            if (debug)
+                cout << "Distance : " + to_string(dist) << endl;
+            
+            if (dist <= eps)
+                break;
+        }
 
-        if (k == 100) {
-            cout << "WARNING: out of iterations !!" << endl;
+        // exit it the max iterations are reached
+        if (k == max_iterations) {
+            if (debug)
+                cout << "WARNING: out of iterations !!" << endl;
+            
             break;
         }
-        if (dist <= eps)
-            break;
-        k ++;
+
+        k++;
+
+        // switch the pointers to data's vector to change the arrays pourpose
+        auto tmp_data = x_prev_data;
+        x_prev_data = x_k_data;
+        x_k_data = tmp_data;
     }
 
+    // terminate the parallel_for's thread pool
     pf.destroy();
 
+    // copying out the result of the method
     res = x_k;
 }
