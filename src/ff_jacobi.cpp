@@ -12,13 +12,14 @@ void ff_jacobi_method(vector<vector<double>> &A, vector<double> &b, double eps, 
     int k = 0;
 
     int n = A.size();
-
+    
+    // initialization variables
     vector<double> x_k(n);
     vector<double> x_prev(n);
 
+    // getting underling data, return array of double, faster to deal with
     auto A_data = A.data();
     auto b_data = b.data();
-
     auto x_prev_data = x_prev.data();
     auto x_k_data = x_k.data();
 
@@ -43,6 +44,7 @@ void ff_jacobi_method(vector<vector<double>> &A, vector<double> &b, double eps, 
         nw);
 
         if (distance_stop) {
+            // compute the euclidean distance between x_k and x_prev
             auto dist = euclidean_distance(x_k, x_prev);
 
             if (debug)
@@ -52,6 +54,7 @@ void ff_jacobi_method(vector<vector<double>> &A, vector<double> &b, double eps, 
                 break;
         }
 
+        // exit it the max iterations are reached
         if (k == max_iterations) {
             if (debug)
                 cout << "WARNING: out of iterations !!" << endl;
@@ -61,11 +64,12 @@ void ff_jacobi_method(vector<vector<double>> &A, vector<double> &b, double eps, 
 
         k++;
 
-        // swap the array
+        // switch the pointers to data's vector to change the arrays pourpose
         auto tmp_data = x_prev_data;
         x_prev_data = x_k_data;
         x_k_data = tmp_data;
     }
 
+    // copying out the result of the method
     res = x_k;
 }

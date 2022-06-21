@@ -35,8 +35,8 @@ int main(int argc, char** argv) {
     int max_iterations = atoi(argv[3]);
     int distance_stop = atoi(argv[4]);
 
-    srand(time(NULL));
-    //srand(123);
+    //srand(time(NULL));
+    srand(123);
 
     // instantiate matrix A
     vector<vector<double>> A(n);

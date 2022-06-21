@@ -15,7 +15,7 @@ do
         if  [[ $n_cores -eq 1 ]]
         then
             # getting times
-            times=$(./main $1 1 10 $2 | cut -d " " -f12);
+            times=$(./main $1 1 5 $2 | cut -d " " -f12);
             seq_time=$(echo $times | cut -d " " -f1);
             ff_time=$(echo $times | cut -d " " -f2);
             threads_time=$(echo $times | cut -d " " -f3);
@@ -24,7 +24,7 @@ do
             seq_avg=$(echo $seq_avg+$seq_time | bc -l);
         else
             # getting times
-            times=$(./main $1 $n_cores 10 $2 | cut -d " " -f12);
+            times=$(./main $1 $n_cores 5 $2 | cut -d " " -f12);
             ff_time=$(echo $times | cut -d " " -f1);
             threads_time=$(echo $times | cut -d " " -f2);
             threads2_time=$(echo $times | cut -d " " -f3);
