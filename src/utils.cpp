@@ -8,9 +8,9 @@
 using namespace std;
 
 // Computing the euclidan distance between two vectors x and y
-double euclidean_distance(vector<double> x, vector<double> y) {
+float euclidean_distance(vector<float> x, vector<float> y) {
     int n = x.size();
-    double dist = 0;
+    float dist = 0;
 
     for (int i=0; i<n; i++) {
         dist += pow((x[i] - y[i]), 2);
@@ -20,19 +20,19 @@ double euclidean_distance(vector<double> x, vector<double> y) {
 }
 
 // Return a random number taked uniformelly in the range [minimum, maximum]
-double random_in_range(int minimum, int maximum) {
-    auto randValue = rand() / double(RAND_MAX); // random number in [0, 1]
+float random_in_range(int minimum, int maximum) {
+    auto randValue = rand() / float(RAND_MAX); // random number in [0, 1]
     randValue = randValue*(maximum - minimum) + minimum;
 
     return randValue;
 }
 
 // Check if the matrix A is diagonally dominant
-bool is_diagonally_dominant(vector<vector<double>> A) {
+bool is_diagonally_dominant(vector<vector<float>> A) {
     int n = A.size();
 
     for (int i=0; i<n; i++) {
-        double sum = 0;
+        float sum = 0;
         for (int j=0; j<n; j++) {
             if (j!=i)
                 sum += abs(A[i][j]);
@@ -47,7 +47,7 @@ bool is_diagonally_dominant(vector<vector<double>> A) {
 }
 
 // Initialize the problem appropiatelly filling the vectors A and b
-void initialize_problem(vector<vector<double>> &A, vector<double> &b, int minimum, int maximum) {
+void initialize_problem(vector<vector<float>> &A, vector<float> &b, int minimum, int maximum) {
     int n = A.size();
 
     // initialize matrix with random values
@@ -62,7 +62,7 @@ void initialize_problem(vector<vector<double>> &A, vector<double> &b, int minimu
     for (int i=0; i<n; i++) {
 
         // To store the sum of the current row
-        double sum = 0;
+        float sum = 0;
         for (int j = 0; j < n; j++)
             if (j != i)
                 sum += abs(A[i][j]);
@@ -76,7 +76,7 @@ void initialize_problem(vector<vector<double>> &A, vector<double> &b, int minimu
 }
 
 // Utility that print a vector
-void print_vector(vector<double> b) {
+void print_vector(vector<float> b) {
     for (auto i: b) {
         cout << i << " ";
     }
@@ -84,7 +84,7 @@ void print_vector(vector<double> b) {
 }
 
 // Utility that print a matrix
-void print_matrix(vector<vector<double>> A) {
+void print_matrix(vector<vector<float>> A) {
     for (int i=0; i<A.size(); i++) {
         for (int j=0; j<A[i].size(); j++)
             std::cout << A[i][j] << ' ';

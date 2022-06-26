@@ -40,19 +40,19 @@ int main(int argc, char** argv) {
     srand(123);
 
     // instantiate matrix A
-    vector<vector<double>> A(n);
+    vector<vector<float>> A(n);
     for (int i=0; i<n; i++) {
-        A[i] = vector<double>(n);
+        A[i] = vector<float>(n);
     }
 
     // instantiate vector b
-    vector<double> b(n);
+    vector<float> b(n);
 
     // instantiate vector res
-    vector<double> res_seq(n);
-    vector<double> res_ff(n);
-    vector<double> res_th(n);
-    vector<double> res_th2(n);
+    vector<float> res_seq(n);
+    vector<float> res_ff(n);
+    vector<float> res_th(n);
+    vector<float> res_th2(n);
 
     // initialize the problem
     initialize_problem(A, b, -10, 10);

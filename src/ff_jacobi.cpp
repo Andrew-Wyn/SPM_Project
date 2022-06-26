@@ -11,16 +11,16 @@
 using namespace std;
 using namespace ff;
 
-void ff_jacobi_method(vector<vector<double>> &A, vector<double> &b, double eps, int max_iterations, bool distance_stop, bool debug, vector<double> &res, int nw) {
+void ff_jacobi_method(vector<vector<float>> &A, vector<float> &b, float eps, int max_iterations, bool distance_stop, bool debug, vector<float> &res, int nw) {
     int k = 0;
 
     int n = A.size();
     
     // initialization variables
-    vector<double> x_k(n);
-    vector<double> x_prev(n);
+    vector<float> x_k(n);
+    vector<float> x_prev(n);
 
-    // getting underling data, return array of double, faster to deal with
+    // getting underling data, return array of float, faster to deal with
     auto A_data = A.data();
     auto b_data = b.data();
     auto x_prev_data = x_prev.data();
@@ -43,7 +43,7 @@ void ff_jacobi_method(vector<vector<double>> &A, vector<double> &b, double eps, 
         // parallel for - map pattern
         pf.parallel_for(0, n, 1, chunk_size,
         [&](const long i){
-            double sigma = 0;
+            float sigma = 0;
 
             for (int j=0; j<n; j++) {
                 if  ( j!=i )

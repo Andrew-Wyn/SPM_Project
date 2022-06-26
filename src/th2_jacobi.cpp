@@ -46,21 +46,21 @@ private:
 };
 
 
-void th2_jacobi_method(vector<vector<double>> &A, vector<double> &b, double eps, int max_iterations, bool distance_stop, bool debug, vector<double> &res, int nw) {
+void th2_jacobi_method(vector<vector<float>> &A, vector<float> &b, float eps, int max_iterations, bool distance_stop, bool debug, vector<float> &res, int nw) {
     int n = A.size();
 
     // initialization variables
-    vector<double> x_k(n, 0);
-    vector<double> x_prev(n, 0);
+    vector<float> x_k(n, 0);
+    vector<float> x_prev(n, 0);
 
-    // getting underling data, return array of double, faster to deal with
+    // getting underling data, return array of float, faster to deal with
     auto A_data = A.data();
     auto b_data = b.data();
 
     MyBarrier computed_iteration_bar(nw);
     MyBarrier ready_to_restart_bar(nw);
 
-    double dist;
+    float dist;
 
     auto thread_function = [&](const int thread_id, const long start, const long end) {
         int k = 0;
@@ -81,7 +81,7 @@ void th2_jacobi_method(vector<vector<double>> &A, vector<double> &b, double eps,
 
             // Jacobi Iteration
             for (int i=start; i<end; i++) {
-                double sigma = 0;
+                float sigma = 0;
 
                 for (int j=0; j<n; j++) {
                     if  ( j!=i )

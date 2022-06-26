@@ -6,21 +6,21 @@ using namespace std;
 #define UTILS_H
 
 // Computing the euclidan distance between two vectors x and y
-double euclidean_distance(vector<double> x, vector<double> y);
+float euclidean_distance(vector<float> x, vector<float> y);
 
 // Return a random number taked uniformelly in the range [minimum, maximum]
-double random_in_range(int minimum, int maximum);
+float random_in_range(int minimum, int maximum);
 
 // Check if the matrix A is diagonally dominant
-bool is_diagonally_dominant(vector<vector<double>> A);
+bool is_diagonally_dominant(vector<vector<float>> A);
 
 // Initialize the problem appropiatelly filling the vectors A and b
-void initialize_problem(vector<vector<double>> &A, vector<double> &b, int minimum, int maximum);
+void initialize_problem(vector<vector<float>> &A, vector<float> &b, int minimum, int maximum);
 
 // Utility that print a vector
-void print_vector(vector<double> b);
+void print_vector(vector<float> b);
 
 // Utility that print a matrix
-void print_matrix(vector<vector<double>> A);
+void print_matrix(vector<vector<float>> A);
 
 #endif
