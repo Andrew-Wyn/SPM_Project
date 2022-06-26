@@ -11,6 +11,9 @@
 #include <functional>
 #include <cstdio>
 
+#include "th_jacobi.hpp"
+#include "utils.hpp"
+
 using namespace std;
 
 // Shared queue class
@@ -181,6 +184,13 @@ void th_jacobi_method(vector<vector<double>> &A, vector<double> &b, double eps, 
     ThParallelFor pf(nw);
 
     while ( true ) {
+        // exit it the max iterations are reached
+        if (k == max_iterations) {
+            if (debug)
+                cout << "WARNING: out of iterations !!" << endl;
+            
+            break;
+        }
 
         // Jacobi Iteration
         pf.parallel_for(0, n, [&](const long i){
@@ -203,14 +213,6 @@ void th_jacobi_method(vector<vector<double>> &A, vector<double> &b, double eps, 
             
             if (dist <= eps)
                 break;
-        }
-
-        // exit it the max iterations are reached
-        if (k == max_iterations) {
-            if (debug)
-                cout << "WARNING: out of iterations !!" << endl;
-            
-            break;
         }
 
         k++;

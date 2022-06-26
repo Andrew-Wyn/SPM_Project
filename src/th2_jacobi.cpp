@@ -11,6 +11,9 @@
 #include <functional>
 #include <cstdio>
 
+#include "th2_jacobi.hpp"
+#include "utils.hpp"
+
 using namespace std;
 
 // Barrier Class
@@ -68,6 +71,14 @@ void th2_jacobi_method(vector<vector<double>> &A, vector<double> &b, double eps,
         auto x_k_data = x_k.data();
 
         while ( true ) {
+            // exit it the max iterations are reached
+            if (k == max_iterations) {
+                if (thread_id == 0 && debug)
+                    cout << "WARNING: out of iterations !!" << endl;
+
+                break;
+            }
+
             // Jacobi Iteration
             for (int i=start; i<end; i++) {
                 double sigma = 0;
@@ -100,15 +111,7 @@ void th2_jacobi_method(vector<vector<double>> &A, vector<double> &b, double eps,
                     break;
                 }
             }
-            
-            // exit it the max iterations are reached
-            if (k == max_iterations) {
-                if (thread_id == 0 && debug)
-                    cout << "WARNING: out of iterations !!" << endl;
-
-                break;
-            }
-            
+                        
             k++;
 
             // switch the pointers to data's vector to change the arrays pourpose

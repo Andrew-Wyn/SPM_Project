@@ -2,14 +2,15 @@
 #include <cmath>
 #include <random>
 #include <vector>
-#include <string> 
+#include <string>
+#include <chrono>
 
-#include "utimer.cpp"
-#include "utils.cpp"
-#include "seq_jacobi.cpp"
-#include "ff_jacobi.cpp"
-#include "th_jacobi.cpp"
-#include "th2_jacobi.cpp"
+#include "utimer.hpp"
+#include "utils.hpp"
+#include "seq_jacobi.hpp"
+#include "ff_jacobi.hpp"
+#include "th_jacobi.hpp"
+#include "th2_jacobi.hpp"
 
 using namespace std;
 

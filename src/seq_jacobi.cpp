@@ -2,6 +2,9 @@
 #include <cmath>
 #include <vector>
 
+#include "seq_jacobi.hpp"
+#include "utils.hpp"
+
 using namespace std;
 
 void seq_jacobi_method(vector<vector<double>> &A, vector<double> &b, double eps, int max_iterations, bool distance_stop, bool debug, vector<double> &res) {
@@ -20,6 +23,13 @@ void seq_jacobi_method(vector<vector<double>> &A, vector<double> &b, double eps,
     auto x_k_data = x_k.data();
 
     while ( true ) {
+        // exit it the max iterations are reached
+        if (k == max_iterations) {
+            if (debug)
+                cout << "WARNING: out of iterations !!" << endl;
+            
+            break;
+        }
 
         // Jacobi Iteration
         for (int i=0; i<n; i++) {
@@ -40,14 +50,6 @@ void seq_jacobi_method(vector<vector<double>> &A, vector<double> &b, double eps,
 
             if (dist <= eps)
                break;
-        }
-
-        // exit it the max iterations are reached
-        if (k == max_iterations) {
-            if (debug)
-                cout << "WARNING: out of iterations !!" << endl;
-            
-            break;
         }
 
         k++;

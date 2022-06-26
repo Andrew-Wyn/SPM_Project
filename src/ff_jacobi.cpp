@@ -5,6 +5,9 @@
 #include <ff/ff.hpp>
 #include <ff/parallel_for.hpp>
 
+#include "ff_jacobi.hpp"
+#include "utils.hpp"
+
 using namespace std;
 using namespace ff;
 
@@ -29,6 +32,14 @@ void ff_jacobi_method(vector<vector<double>> &A, vector<double> &b, double eps, 
     int chunk_size = n/nw;
 
     while ( true ) {
+        // exit it the max iterations are reached
+        if (k == max_iterations) {
+            if (debug)
+                cout << "WARNING: out of iterations !!" << endl;
+
+            break;
+        }
+
         // parallel for - map pattern
         pf.parallel_for(0, n, 1, chunk_size,
         [&](const long i){
@@ -52,14 +63,6 @@ void ff_jacobi_method(vector<vector<double>> &A, vector<double> &b, double eps, 
 
             if (dist <= eps)
                 break;
-        }
-
-        // exit it the max iterations are reached
-        if (k == max_iterations) {
-            if (debug)
-                cout << "WARNING: out of iterations !!" << endl;
-
-            break;
         }
 
         k++;

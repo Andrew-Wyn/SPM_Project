@@ -3,6 +3,8 @@
 #include <random>
 #include <vector>
 
+#include "utils.hpp"
+
 using namespace std;
 
 // Computing the euclidan distance between two vectors x and y
