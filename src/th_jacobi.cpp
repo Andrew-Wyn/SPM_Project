@@ -149,9 +149,9 @@ public:
         future<void> futures[num_workers];
         for (int worker=0; worker<num_workers-1; worker++) {
             
-            futures[worker] = tp.push(fun, worker*delta, (worker+1)*delta);
+            futures[worker] = tp.push(fun, start + worker*delta, start + (worker+1)*delta);
         }
-        futures[num_workers-1] = tp.push(fun, (num_workers-1)*delta, end);
+        futures[num_workers-1] = tp.push(fun, start + (num_workers-1)*delta, end);
         
         // wait the results
         for (int worker=0; worker<num_workers; worker++) {
